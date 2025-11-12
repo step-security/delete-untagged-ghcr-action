@@ -1,0 +1,79 @@
+name: 'Delete untagged ghcr'
+author: 'step-security'
+description: 'Delete containers on github container registry without tags'
+branding:
+  icon: 'trash-2'
+  color: 'blue'
+inputs:
+  token:
+    description: >
+      Personal access token (PAT) used to fetch the repository. The PAT is configured
+      with the local git config, which enables your scripts to run authenticated git
+      commands. The post-job step removes the PAT.
+      needs delete:packages permissions
+    required: true
+  repository_owner:
+    description: 'The repository owner name'
+    default: ${{ github.repository_owner }}
+    required: true
+  repository:
+    description: 'Delete only from repository name'
+    default: ${{ github.repository }}
+    required: false
+  package_name:
+    description: 'Delete only from comma separated package names'
+    required: false
+  untagged_only:
+    description: 'Delete only package versions without tag'
+    default: true
+  except_untagged_multiplatform:
+    description: 'Exclude untagged multiplatform packages from deletion (only for --untagged_only)'
+    default: true
+  with_sigs:
+    description: 'Include tagged signatures of untagged containers that will be deleted (only for --untagged_only)'
+    default: false
+    required: false
+  owner_type:
+    description : "Owner type (org or user)"
+    required: true
+outputs:
+  num_deleted:
+    description: 'Number of package versions that were deleted during the run.'
+    value:  ${{ steps.delete-untagged-ghcr-action.outputs.num_deleted }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install Python dependencies
+      shell: bash
+      run: pip install -r ${{ github.action_path }}/requirements.txt
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Login to GitHub Container Registry with PAT_TOKEN
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ inputs.token }}
+    - name: Run action
+      id: delete-untagged-ghcr-action
+      shell: bash
+      run: |
+        args=( "--token" "${{ inputs.token }}" )
+        args+=( "--repository_owner" "${{ inputs.repository_owner }}" )
+        if [[ -n "${{ inputs.repository }}" ]]; then
+          args+=( "--repository" "${{ inputs.repository }}" )
+        fi
+        if [[ -n "${{ inputs.package_name }}" ]]; then
+          args+=( "--package_names" "${{ inputs.package_name }}" )
+        fi
+        args+=( "--untagged_only" "${{ inputs.untagged_only }}" )
+        args+=( "--except_untagged_multiplatform" "${{ inputs.except_untagged_multiplatform }}" )
+        args+=( "--with_sigs" "${{ inputs.with_sigs }}")
+        args+=( "--owner_type" "${{ inputs.owner_type }}" )
+        echo "args: ${args[@]}"
+        python ${{ github.action_path }}/clean_ghcr.py "${args[@]}"
