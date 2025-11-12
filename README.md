@@ -1,6 +1,6 @@
 # delete-untagged-ghcr-action 
 
-Action for delete containers from Github container registry
+Action for deleting containers from Github container registry
 
 delete all / untagged ghcr containers in a repository
 ## Usage
@@ -162,7 +162,7 @@ this action to enable verbose output. The GitHub Actions UI also exposes an
 ## Delete all containers from package without tags and corresponding tagged signatures
 
 > [!IMPORTANT]
-> This option has been tested with v3.7.0 [`cosign-installer`][cos-inst] action
+> This option has been tested with v4.0.0 [`cosign-installer`][cos-inst] action
 > using `cosign-release` v2.4.1.
 
 [cos-inst]: https://github.com/step-security/cosign-installer
