@@ -1,6 +1,4 @@
 # delete-untagged-ghcr-action 
-[![test](https://github.com/step-security/delete-untagged-ghcr-action/actions/workflows/test.yml/badge.svg)](https://github.com/step-security/delete-untagged-ghcr-action/actions/workflows/test.yml)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/94534b5b1d7c4c938149bde7dc6d18e2)](https://www.codacy.com/gh/step-security/delete-untagged-ghcr-action/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=step-security/delete-untagged-ghcr-action&amp;utm_campaign=Badge_Grade)
 
 Action for delete containers from Github container registry
 
@@ -165,8 +163,7 @@ this action to enable verbose output. The GitHub Actions UI also exposes an
 
 > [!IMPORTANT]
 > This option has been tested with v3.7.0 [`cosign-installer`][cos-inst] action
-> using `cosign-release` v2.4.1. See [workflow](.github/workflows/reusable.yml)
-> for example ("Install cosign" and "Sign the published Docker image" steps).
+> using `cosign-release` v2.4.1.
 
 [cos-inst]: https://github.com/step-security/cosign-installer
 
